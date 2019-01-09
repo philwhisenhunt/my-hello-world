@@ -9,9 +9,13 @@ Apify.main(async () => {
     
         console.log(`The headline of "${request.url}" is: ${headline}.`);
 
-        const price = $('.info-list li:eq(6) span').text();
+        const info = $('.info-list.address').text();
 
-        console.log(`The price is ${price}`);
+        console.log(`The info is ${info}`);
+
+        // const dates = $('.info-list-label:eq(0)').text();
+
+        // console.log(`The info is ${dates}`);
     }
     
     // Set up the crawler, passing a single options object as an argument.
