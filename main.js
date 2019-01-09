@@ -5,6 +5,8 @@ Apify.main(async () => {
     const requestList = new Apify.RequestList({
         sources: [
             { url: 'https://www.visitrichmondva.com/events/' },
+            // { url: 'https://news.ycombinator.com/' },
+
         ],
     });
     await requestList.initialize();
@@ -22,10 +24,10 @@ Apify.main(async () => {
 
         // Here you can set options that are passed to the Apify.launchPuppeteer() function.
         // For example, you can set "slowMo" to slow down Puppeteer operations to simplify debugging
-        launchPuppeteerOptions: { slowMo: 500 },
+        // launchPuppeteerOptions: { slowMo: 500 },
 
         // Stop crawling after several pages
-        maxRequestsPerCrawl: 10,
+        maxRequestsPerCrawl: 2,
 
         // This function will be called for each URL to crawl.
         // Here you can write the Puppeteer scripts you are familiar with,
@@ -43,9 +45,9 @@ Apify.main(async () => {
                 // We're getting the title, rank and URL of each post on Hacker News.
                 $posts.forEach(($post) => {
                     data.push({
-                        title2: $('.inner:eq(0) .info-list:eq(0) h4:eq(0)').text(),
-
-                        title: $post.querySelector('.title a').innerText,
+                        // title2: $('.inner:eq(0) .info-list:eq(0) h4:eq(0)').innerText(),
+                        title: $post.querySelector('.inner:eq(0) .info-list:eq(0) h4:eq(0)').innerText,
+                        // title: $post.querySelector('.title a').innerText,
                         rank: $post.querySelector('.rank').innerText,
                         href: $post.querySelector('.title a').href,
                     });
@@ -53,7 +55,7 @@ Apify.main(async () => {
 
                 return data;
             };
-            const data = await page.$$eval('.athing', pageFunction);
+            const data = await page.$$eval('.inner', pageFunction);
 
             // Store the results to the default dataset.
             await Apify.pushData(data);
