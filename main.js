@@ -4,7 +4,7 @@ Apify.main(async () => {
     // Create and initialize an instance of the RequestList class that contains the start URL.
     const requestList = new Apify.RequestList({
         sources: [
-            { url: 'https://news.ycombinator.com/' },
+            { url: 'https://www.visitrichmondva.com/events/' },
         ],
     });
     await requestList.initialize();
@@ -43,6 +43,8 @@ Apify.main(async () => {
                 // We're getting the title, rank and URL of each post on Hacker News.
                 $posts.forEach(($post) => {
                     data.push({
+                        title2: $('.inner:eq(0) .info-list:eq(0) h4:eq(0)').text(),
+
                         title: $post.querySelector('.title a').innerText,
                         rank: $post.querySelector('.rank').innerText,
                         href: $post.querySelector('.title a').href,
