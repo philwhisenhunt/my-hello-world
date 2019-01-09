@@ -1,37 +1,20 @@
 const Apify = require('apify');
 
 Apify.main(async () => {
-    // Get queue and enqueue first url.
     const requestQueue = await Apify.openRequestQueue();
-    await requestQueue.addRequest(new Apify.Request({ url: 'https://news.ycombinator.com/' }));
+    await requestQueue.addRequest({ url: 'https://www.iana.org/' });
+    const pseudoUrls = [new Apify.PseudoUrl('https://www.iana.org/[.*]')];
 
-    // Create crawler.
     const crawler = new Apify.PuppeteerCrawler({
         requestQueue,
-
-        // This page is executed for each request.
-        // If request failes then it's retried 3 times.
-        // Parameter page is Puppeteers page object with loaded page.
-        handlePageFunction: async ({ page, request }) => {
+        handlePageFunction: async ({ request, page }) => {
             const title = await page.title();
-            const posts = await page.$$('.athing');
-
-            console.log(`Page ${request.url} succeeded and it has ${posts.length} posts.`);
-
-            // Save data.
-            await Apify.pushData({
-                url: request.url,
-                title,
-                postsCount: posts.length,
-            });
+            console.log(`Title of ${request.url}: ${title}`);
+            await Apify.utils.puppeteer.enqueueLinks(page, 'a', pseudoUrls, requestQueue);
         },
-
-        // If request failed 4 times then this function is executed.
-        handleFailedRequestFunction: async ({ request }) => {
-            console.log(`Request ${request.url} failed 4 times`);
-        },
+        maxRequestsPerCrawl: 100,
+        maxConcurrency: 10,
     });
 
-    // Run crawler.
     await crawler.run();
 });
